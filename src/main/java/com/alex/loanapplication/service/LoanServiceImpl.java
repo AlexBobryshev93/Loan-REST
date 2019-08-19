@@ -1,32 +1,31 @@
-package com.alex.loanapplication.controller;
+package com.alex.loanapplication.service;
 
 import com.alex.loanapplication.model.Loan;
 import com.alex.loanapplication.repo.LoanRepo;
-import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@RestController
-@RequestMapping("loans")
-@AllArgsConstructor
-public class LoanController {
+@Service
+public class LoanServiceImpl implements LoanService {
+    @Autowired
     private LoanRepo loanRepo;
 
-    @GetMapping
-    List<Loan> listLoans() {
+    @Override
+    public List<Loan> getAll() {
         return (ArrayList<Loan>) loanRepo.findAll();
     }
 
-    @GetMapping("{id}")
-    List<Loan> listLoansByUser(@PathVariable int id) {
-        return (ArrayList<Loan>) loanRepo.findAllByUser(id);
+    @Override
+    public List<Loan> getAllByUserId(int id) {
+        return loanRepo.findAllByUser(id);
     }
 
-    @PostMapping
-    boolean apply(@RequestBody Loan loan) {
+    @Override
+    public boolean apply(Loan loan) {
         loan.getUser().getCountry().setLastApplicationTime(LocalDateTime.now());
         if (loan.isValid()) {
             loanRepo.save(loan);
