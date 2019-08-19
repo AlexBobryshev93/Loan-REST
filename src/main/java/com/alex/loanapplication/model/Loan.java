@@ -3,7 +3,8 @@ package com.alex.loanapplication.model;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Period;
 
 @Entity
 @Table(name = "loans")
@@ -14,11 +15,15 @@ public class Loan {
     private int id;
 
     private double amount;
-    private LocalDate term;
+    private Period term;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    private boolean approved;
+    public boolean isValid() {
+        if (user.isBlacklisted()
+                || LocalDateTime.now().isBefore(user.getCountry().getLastApplicationTime().plusSeconds(1))) return false;
+        else return true;
+    }
 }

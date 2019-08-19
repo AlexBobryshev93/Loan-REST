@@ -3,11 +3,9 @@ package com.alex.loanapplication.controller;
 import com.alex.loanapplication.model.Loan;
 import com.alex.loanapplication.repo.LoanRepo;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,5 +23,15 @@ public class LoanController {
     @GetMapping("{id}")
     List<Loan> listLoansByUser(@PathVariable int id) {
         return (ArrayList<Loan>) loanRepo.findAllByUser(id);
+    }
+
+    @PostMapping
+    boolean apply(@RequestBody Loan loan) {
+        loan.getUser().getCountry().setLastApplicationTime(LocalDateTime.now());
+        if (loan.isValid()) {
+            loanRepo.save(loan);
+            return true;
+        }
+        else return false;
     }
 }

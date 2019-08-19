@@ -14,5 +14,9 @@ public class User {
 
     private String name;
     private String surname;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
     private Country country;
+    private boolean blacklisted = false;
 }
